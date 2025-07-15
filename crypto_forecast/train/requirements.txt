@@ -1,0 +1,9 @@
+tqdm
+boto3
+numpy
+pandas
+mlflow
+pymysql==1.0.2
+SQLAlchemy==2.0.25
+cryptography
+psycopg2-binary

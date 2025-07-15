@@ -1,0 +1,7 @@
+bentoml>=1.0.0a
+pandas
+pydantic
+scikit-learn
+aequitas-lite
+mlflow
+docker
