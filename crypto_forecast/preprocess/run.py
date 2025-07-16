@@ -5,13 +5,18 @@ import pandas as pd
 from src.preprocessing import validate_missing_values, validate_missing_timestamp, validate_duplicate_values, fill_time_gaps, fill_missing_values
 from src.feature_engineering import amount_of_change_price, amount_of_change_rate
 
+from structure.schema import SchemaManager
 from structure.structure import TimeStructure
-from utils.utils import load_spec_from_config
+from load.src.db_manager import DatabaseManager
+from utils.utils import read_sql_file, load_spec_from_base_config
 
 
 # globals
+ROOT = Path(__file__).resolve().parent
+TASK = 'preprocess'
+
 DB_HOST = os.getenv("DB_HOST")
-DB_PORT = int(os.getenv("DB_PORT"))
+DB_PORT = os.getenv("DB_PORT")
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_NAME = os.getenv("DB_NAME")
@@ -20,39 +25,27 @@ DB_NAME = os.getenv("DB_NAME")
 class Preprocessor:
     
     def __init__(self, cfg_meta, cfg_preprocess):
+        
         self.cfg_meta = cfg_meta
         self.cfg_preprocess = cfg_preprocess
-        
         self.unit = TimeStructure(cfg_preprocess.unit).name
+        self.schema = SchemaManager(f"./configs/schema/{cfg_meta.schema_file}").schema
         
-        # self.engine = create_db_engine(
-        #     host=DB_HOST,
-        #     port=DB_PORT,
-        #     user=DB_USER,
-        #     password=DB_PASSWORD,
-        #     database=DB_NAME
-		# )
-        # self.conn = self.engine.connect()
-        # self.cursor = self.engine.raw_connection().cursor()
-    
+        
     def run(self):
-        print("🏃🏻Python 파일 실행")
+        db_manager = DatabaseManager(
+            backend=self.cfg_meta.database_backend,
+            host=DB_HOST,
+            port=DB_PORT,
+            user=DB_USER,
+            passwd=DB_PASSWORD,
+            database=DB_NAME
+        )
         
         # 데이터 불러오기
-        print("🧐 DB 내 데이터 조회")
-        query = f"""
-        		SELECT 
-          			market,
-					candle_date_time_kst,
-					opening_price,
-					trade_price,
-					low_price,
-					high_price,
-					candle_acc_trade_price,
-					candle_acc_trade_volume
-             	FROM {self.cfg_database.layer['bronze']['scheme']}_{self.cfg_database.layer['bronze']['table']};
-                """
-        candle_data = pd.read_sql(query, con=self.engine)
+        candle_data = db_manager.inquire_data_from_table(
+            query=read_sql_query(f"{self.cfg_meta.sql_path}/inquire_data_for_preprocess.sql")
+        )
         
         
         # 누락된 시간 정보 검증
@@ -134,13 +127,19 @@ class Preprocessor:
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default="gru", help="Config Python 파일 명. 확장자 제외.")
+    parser.add_argument("--config", type=str, default="base_config", help="Config Python 파일 명. 확장자 제외.")
     args = parser.parse_args() 
     
     (
-        cfg_database,
-        cfg_preprocessor
-    ) = load_spec_from_config(args.config)
+        meta_spec, 
+        load_spec, 
+        preprocess_spec, 
+        transform_spec, 
+        train_spec, 
+        hyperparameter_spec, 
+        evaluate_spec, 
+        deploy_spec
+    ) = load_spec_from_base_config(args.config)
     
     print(f"🐳 컨테이너 실행")
     preprocessor = Preprocessor(cfg_database, cfg_preprocessor)

@@ -46,9 +46,8 @@ class Loader:
         is_table = db_manager.check_table_exists(table=self.schema["schema"]["table"])
 
         if is_table:
-            # !!!!!!! 수정 필요 !!!!!!! 
             latest_time = db_manager.execute_query(
-                query = read_sql_file("대상 .sql 파일 경로 할당")
+                query = read_sql_file(f"{self.cfg_meta.sql_path}/inquire_recent_timestamp.sql")
             ).scalar()
 
             mode = 'append' # 데이터를 테이블로 적재시 활용

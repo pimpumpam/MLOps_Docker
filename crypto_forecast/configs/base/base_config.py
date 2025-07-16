@@ -1,5 +1,6 @@
 class CfgMeta:
     name = "Crypto Transc MLOps Toy Project"
+    sql_path = "./sql"
     asset_path = "./static/assets"
     schema_file = "crypto_transc_data.json"
     experiment_name = "CryptoForecast"
