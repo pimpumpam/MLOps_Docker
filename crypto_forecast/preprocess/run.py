@@ -2,10 +2,10 @@ import os
 import argparse
 import pandas as pd
 
-from src.query import dataframe_to_tale
-from src.database import create_db_engine
 from src.preprocessing import validate_missing_values, validate_missing_timestamp, validate_duplicate_values, fill_time_gaps, fill_missing_values
 from src.feature_engineering import amount_of_change_price, amount_of_change_rate
+
+from structure.structure import TimeStructure
 from utils.utils import load_spec_from_config
 
 
@@ -19,19 +19,21 @@ DB_NAME = os.getenv("DB_NAME")
 
 class Preprocessor:
     
-    def __init__(self, cfg_database, cfg_preprocessor):
-        self.cfg_database = cfg_database
-        self.cfg_preprocessor = cfg_preprocessor
+    def __init__(self, cfg_meta, cfg_preprocess):
+        self.cfg_meta = cfg_meta
+        self.cfg_preprocess = cfg_preprocess
         
-        self.engine = create_db_engine(
-            host=DB_HOST,
-            port=DB_PORT,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            database=DB_NAME
-		)
-        self.conn = self.engine.connect()
-        self.cursor = self.engine.raw_connection().cursor()
+        self.unit = TimeStructure(cfg_preprocess.unit).name
+        
+        # self.engine = create_db_engine(
+        #     host=DB_HOST,
+        #     port=DB_PORT,
+        #     user=DB_USER,
+        #     password=DB_PASSWORD,
+        #     database=DB_NAME
+		# )
+        # self.conn = self.engine.connect()
+        # self.cursor = self.engine.raw_connection().cursor()
     
     def run(self):
         print("🏃🏻Python 파일 실행")

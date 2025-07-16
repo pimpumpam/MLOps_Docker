@@ -19,7 +19,7 @@ class CfgLoad:
 
 
 class CfgPreprocess:
-    pass
+    unit = "minute"
 
 class CfgTransform:
     scaler = "MinMaxScaler"

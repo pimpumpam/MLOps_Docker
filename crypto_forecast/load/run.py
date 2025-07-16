@@ -6,10 +6,10 @@ from pathlib import Path
 from datetime import datetime, timedelta
 
 from src.db_manager import DatabaseManager
-from src.data_handler import inquire_candle_api, insert_data_to_database, get_recent_timestamp_from_table
+from src.data_handler import inquire_candle_api
 
 from structure.schema import SchemaManager
-from utils.utils import load_spec_from_base_config
+from utils.utils import read_sql_file, load_spec_from_base_config
 
 
 # globals
@@ -46,10 +46,10 @@ class Loader:
         is_table = db_manager.check_table_exists(table=self.schema["schema"]["table"])
 
         if is_table:
-            latest_time = get_recent_timestamp_from_table(
-                table=self.schema["schema"]["table"],
-                engine=db_manager.engine
-            )
+            # !!!!!!! 수정 필요 !!!!!!! 
+            latest_time = db_manager.execute_query(
+                query = read_sql_file("대상 .sql 파일 경로 할당")
+            ).scalar()
 
             mode = 'append' # 데이터를 테이블로 적재시 활용
             tic = datetime.strptime(latest_time, "%Y-%m-%dT%H:%M:%S") + timedelta(minutes=1)
@@ -88,10 +88,9 @@ class Loader:
         
 
         # 테이블 적재
-        insert_data_to_database(
+        db_manager.insert_data_to_table(
             table = self.schema["schema"]["table"],
             data = data,
-            engine = db_manager.engine,
             mode = mode
         )
 
