@@ -12,7 +12,7 @@ ENV DB_HOST=postgres
 ENV DB_PORT=5432
 ENV DB_USER=lazyplum
 ENV DB_PASSWORD=kwsxfk8332
-ENV DB_NAME=crypto_forecast
+ENV DB_NAME=crypto_transc
 
 CMD ["python", "run.py"]
 
@@ -20,4 +20,4 @@ CMD ["python", "run.py"]
 # $ docker build -t crypto_load_image .
 
 # 컨테이너 실행
-# $ docker run -d --name crypto_load --network crypto_forecast_crypto_network crypto_load_image
+# $ docker run -dit --name crypto_load --network crypto_forecast_crypto_network -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/configs:/app/configs" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/utils:/app/utils" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/structure:/app/structure" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/load/src:/app/src" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/load/run.py:/app/run.py" crypto_load_image tail -f /dev/null

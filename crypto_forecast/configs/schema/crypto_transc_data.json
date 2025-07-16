@@ -1,0 +1,179 @@
+{
+    "meta": {
+        "name": "Crypto Transaction History Data",
+        "description": "Upbit 거래 내역 데이터",
+        "created_at": "2025-01-12"
+    },
+
+    "schema": {
+        "database": "",
+        "table": "upbit_candles_1min",
+        "columns": [
+            {
+                "name": "market",
+                "type": "string",
+                "nullable": false,
+                "is_categorical": true,
+                "is_feature": false,
+                "is_label": false,
+                "usage": "identifier",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["load", "preprocess"],
+                "comment": "종목 코드"
+            },
+            {
+                "name": "candle_date_time_utc",
+                "type": "datetime",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": false,
+                "is_label": false,
+                "usage": "identifier",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["load", "preprocess"],
+                "comment": "캔들 기준 시각(UTC 기준) 포맷: yyyy-MM-dd'T'HH:mm:ss"
+            },
+            {
+                "name": "candle_date_time_kst",
+                "type": "datetime",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": false,
+                "is_label": false,
+                "usage": "identifier",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["load", "preprocess"],
+                "comment": "캔들 기준 시각(KST 기준) 포맷: yyyy-MM-dd'T'HH:mm:ss"
+            },
+            {
+                "name": "opening_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": true,
+                "is_label": true,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["load", "preprocess"],
+                "comment": "시가"
+            },
+            {
+                "name": "high_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": false,
+                "is_label": true,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["load", "preprocess"],
+                "comment": "고가"
+            },
+            {
+                "name": "low_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": false,
+                "is_label": true,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["load", "preprocess"],
+                "comment": "저가"
+            },
+            {
+                "name": "trade_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": false,
+                "is_label": true,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["load", "preprocess"],
+                "comment": "종가"
+            },
+            {
+                "name": "timestamp",
+                "type": "long",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": false,
+                "is_label": false,
+                "usage": "identifier",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["load", "preprocess"],
+                "comment": "마지막 틱이 저장된 시각"
+            },
+            {
+                "name": "candle_acc_trade_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": false,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["load", "preprocess"],
+                "comment": "누적 거래 금액"
+            },
+            {
+                "name": "candle_acc_trade_volume",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": false,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["load", "preprocess"],
+                "comment": "누적 거래량"
+            },
+            {
+                "name": "unit",
+                "type": "integer",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": false,
+                "is_label": false,
+                "usage": "identifier",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": [],
+                "comment": "캔들 시간 단위"
+            }
+        ]
+    }
+}

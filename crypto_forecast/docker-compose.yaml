@@ -12,10 +12,10 @@ x-airflow-common:
     AIRFLOW__METRICS__STATSD_PORT: 8125
     AIRFLOW__METRICS__STATSD_PREFIX: airflow
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
-    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://lazyplum:kwsxfk8332@postgres/crypto_forecast
+    AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://lazyplum:kwsxfk8332@postgres/airflow_db
     # For backward compatibility, with Airflow <2.3
-    AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://lazyplum:kwsxfk8332@postgres/crypto_forecast
-    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://lazyplum:kwsxfk8332@postgres/crypto_forecast
+    AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://lazyplum:kwsxfk8332@postgres/airflow_db
+    AIRFLOW__CELERY__RESULT_BACKEND: db+postgresql://lazyplum:kwsxfk8332@postgres/airflow_db
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
@@ -28,8 +28,8 @@ x-airflow-common:
     AIRFLOW__SCHEDULER__ENABLE_HEALTH_CHECK: 'true'
     # WARNING: Use _PIP_ADDITIONAL_REQUIREMENTS option ONLY for a quick checks
     # for other purpose (development, test and especially production usage) build/extend Airflow image.
-    # _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-bentoml>=1.0.0a pandas pydantic xgboost tensorflow keras scikit-learn aequitas-lite mlflow docker}
-    _PIP_ADDITIONAL_REQUIREMENTS: ''
+    _PIP_ADDITIONAL_REQUIREMENTS: ${_PIP_ADDITIONAL_REQUIREMENTS:-bentoml>=1.0.0a pandas pydantic xgboost scikit-learn aequitas-lite mlflow docker}
+    # _PIP_ADDITIONAL_REQUIREMENTS: ''
     AWS_ACCESS_KEY_ID: lazyplum
     AWS_SECRET_ACCESS_KEY: kwsxfk8332
     MLFLOW_S3_ENDPOINT_URL: http://minio:9000
@@ -57,12 +57,13 @@ services:
     environment:
       POSTGRES_USER: 'lazyplum'
       POSTGRES_PASSWORD: 'kwsxfk8332'
-      POSTGRES_DB: 'crypto_forecast'
+      POSTGRES_DB: 'airflow_db'
     volumes:
       - ./docker-data/postgres/data:/var/lib/postgresql/data
       - ./sql/init-mlflow.sql:/docker-entrypoint-initdb.d/1-init-mlflow.sql
+      - ./sql/init-crypto-transc.sql:/docker-entrypoint-initdb.d/2-init-crypto-transc.sql
     healthcheck:
-      test: ["CMD", "pg_isready", "-q", "-U", "lazyplum", "-d", "crypto_forecast"]
+      test: ["CMD", "pg_isready", "-q", "-U", "lazyplum", "-d", "airflow_db"]
       interval: 10s
       timeout: 5s
       retries: 1
@@ -280,7 +281,7 @@ services:
       - 9102:9102
       - 8125:8125/udp
     volumes:
-      - './config/airflow-statsd-exporter:/config'
+      - './configs/airflow-statsd-exporter:/config'
     networks:
       - crypto_network
 
@@ -300,7 +301,7 @@ services:
     ports:
       - 9090:9090
     volumes:
-      - './config/prometheus:/etc/prometheus'
+      - './configs/prometheus:/etc/prometheus'
       - './docker-data/prometheus/data:/prometheus'
     restart:
       always

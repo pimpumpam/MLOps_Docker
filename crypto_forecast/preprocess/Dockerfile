@@ -12,7 +12,7 @@ ENV DB_HOST=postgres
 ENV DB_PORT=5432
 ENV DB_USER=lazyplum
 ENV DB_PASSWORD=kwsxfk8332
-ENV DB_NAME=crypto_forecast
+ENV DB_NAME=crypto_transc
 
 CMD ["python", "run.py"]
 

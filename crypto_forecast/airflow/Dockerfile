@@ -24,6 +24,6 @@ RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/g' \
             /etc/ssh/sshd_config
 
 # Python 패키지 설치
-RUN pip install --no-cache-dir -r requirements.txt
+# RUN pip install --no-cache-dir -r requirements.txt
 
 USER airflow
