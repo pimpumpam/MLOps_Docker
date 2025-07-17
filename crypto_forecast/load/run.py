@@ -50,12 +50,10 @@ class Loader:
                 query = read_sql_file(f"{self.cfg_meta.sql_path}/inquire_recent_timestamp.sql")
             ).scalar()
 
-            mode = 'append' # 데이터를 테이블로 적재시 활용
             tic = datetime.strptime(latest_time, "%Y-%m-%dT%H:%M:%S") + timedelta(minutes=1)
             toc = tic + timedelta(days=1)
 
         else:
-            mode = 'fail' # 데이터를 테이블로 적재시 활용
             tic = datetime.strptime(self.cfg_loader.tic, "%Y-%m-%dT%H:%M:%S")
             toc = datetime.strptime(self.cfg_loader.toc, "%Y-%m-%dT%H:%M:%S")
 
@@ -90,7 +88,7 @@ class Loader:
         db_manager.insert_data_to_table(
             table = self.schema_manager.schema["schema"]["table"],
             data = data,
-            mode = mode
+            mode = "append" if is_table else "fail"
         )
 
         
