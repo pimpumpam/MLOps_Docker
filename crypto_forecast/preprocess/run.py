@@ -38,7 +38,7 @@ class Preprocessor:
         FEATURE_COLS = self.schema_manager.get_columns_by_filter(
             is_feature=True,
             usage="feature",
-            task="preprocess"
+            task=TASK
         )
         
         # DB 엔진
