@@ -1,14 +1,19 @@
 import os
 import argparse
 import pandas as pd
+from datetime import datetime
 
-from src.query import dataframe_to_tale
-from src.database import create_db_engine
-from src.transformation import MultiColumnScaler
-from src.preparation import split_train_test
-from utils.utils import load_spec_from_config
+from src.transformation import MultiColumnScaler, split_train_test
+
+from structure.schema import SchemaManager
+from load.src.db_manager import DatabaseManager
+from utils.utils import read_sql_file, load_spec_from_base_config
+
 
 # globals
+ROOT = Path(__file__).resolve().parent
+TASK = "transform"
+
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = int(os.getenv("DB_PORT"))
 DB_USER = os.getenv("DB_USER")
@@ -18,62 +23,49 @@ DB_NAME = os.getenv("DB_NAME")
 
 class Transformer:
     
-    def __init__(self, cfg_database, cfg_transformer):
-        self.cfg_database = cfg_database
-        self.cfg_transformer = cfg_transformer
+    def __init__(self, cfg_meta, cfg_transform):
         
-        self.engine = create_db_engine(
+        self.cfg_meta = cfg_meta
+        self.cfg_transform = cfg_transform
+        self.schema_manager = SchemaManager(f"./configs/schema/{cfg_meta.schema_file}")
+                
+    def run(self):
+        
+        TIME_COL = "candle_date_time_kst"
+        FEATURE_COLS = self.schema_manager.get_columns_by_filter(
+            is_feature=True,
+            usage="feature",
+            task=TASK
+        )
+        
+        print(FEATURE_COLS)
+        
+        # DB 엔진
+        db_manager = DatabaseManager(
+            backend=self.cfg_meta.database_backend,
             host=DB_HOST,
             port=DB_PORT,
             user=DB_USER,
-            password=DB_PASSWORD,
+            passwd=DB_PASSWORD,
             database=DB_NAME
         )
-        self.conn = self.engine.connect()
-        self.cursor = self.engine.raw_connection().cursor()
-        
-    def run(self):
-        print("🏃🏻Python 파일 실행")
         
         # 데이터 불러오기
-        print("🧐 DB 내 데이터 조회")
-        query = f"""
-                SELECT
-                    market,
-                    candle_date_time_kst,
-                    opening_price,
-                    trade_price,
-                    low_price,
-                    high_price,
-                    candle_acc_trade_price,
-                    candle_acc_trade_volume,
-                    diff_opening_price,
-                    diff_trade_price,
-                    diff_low_price,
-                    diff_high_price,
-                    diff_candle_acc_trade_price,
-                    diff_candle_acc_trade_volume,
-                    ratio_opening_price,
-                    ratio_trade_price,
-                    ratio_low_price,
-                    ratio_high_price,
-                    ratio_candle_acc_trade_price,
-                    ratio_candle_acc_trade_volume
-                FROM {self.cfg_database.layer['silver']['scheme']}_{self.cfg_database.layer['silver']['table']}
-        """
-        candle_data = pd.read_sql(query, con=self.engine)
+        candle_data = db_manager.inquire_data_from_table(
+            query=read_sql_file(f"{self.cfg_meta.sql_path}/inquire-data-for-transform.sql")
+        )
         
         
         # scaler 적용
         print("⚖️ 컬럼 별 scaler 적용")
-        scaler = MultiColumnScaler(self.cfg_transformer.scaler['name'])
+        scaler = MultiColumnScaler(self.cfg_transform.scaler)
         scaler.fit_transform(
             data=candle_data,
-            columns=self.cfg_transformer.feature_field,
+            columns=FEATURE_COLS,
             inplace=True,
             save_pkl=True,
-            save_path=self.cfg_transformer.scaler['save_dir'],
-            save_name=self.cfg_transformer.scaler['save_name']
+            save_path=self.cfg_meta.artifact_path,
+            save_name=f"{self.cfg_transform.scaler.lower()}_{datetime.now().strftime("%Y%m%d%H%M%S")}"
         )
         
         
@@ -83,41 +75,46 @@ class Transformer:
             data=candle_data,
             train_ratio=0.7,
             test_ratio=None,
-            time_col=self.cfg_transformer.time_field,
-            # split_point=self.cfg_transformer.split_point
+            time_col=TIME_COL
         )
         
         
         # 데이터 적재
         print("📦 학습 데이터 셋 DB 적재")
-        dataframe_to_tale(
-            table_name=f"{self.cfg_database.layer['gold']['scheme']}_{self.cfg_database.layer['gold']['table']}",
+        db_manager.insert_data_to_table(
+            table=self.schema_manager.schema["schema"]["table"]+"_train",
             data=train_dataset,
-            conn=self.conn,
-            table_name_suffix='train',
-            table_exists_handling='replace'
+            mode="replace"
         )
         
+
+        
         print("📦 검증 데이터 셋 DB 적재")
-        dataframe_to_tale(
-            table_name=f"{self.cfg_database.layer['gold']['scheme']}_{self.cfg_database.layer['gold']['table']}",
+        db_manager.insert_data_to_table(
+            table=self.schema_manager.schema["schema"]["table"]+"_test",
             data=test_dataset,
-            conn=self.conn,
-            table_name_suffix='test',
-            table_exists_handling='replace'
+            mode="replace"
         )
         
         
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default="gru", help="Config Python 파일 명. 확장자 제외.")
+    parser.add_argument("--config", type=str, default="base_config", help="Config Python 파일 명. 확장자 제외.")
     args = parser.parse_args() 
     
     (
-        cfg_database,
-        cfg_transformer
-    ) = load_spec_from_config(args.config)
+        meta_spec, 
+        load_spec, 
+        preprocess_spec, 
+        transform_spec, 
+        train_spec, 
+        hyperparameter_spec, 
+        evaluate_spec, 
+        deploy_spec
+    ) = load_spec_from_base_config(args.config)
     
-    transformer = Transformer(cfg_database, cfg_transformer)
+    print(f"🐳 컨테이너 실행")
+    transformer = Transformer(meta_spec, transform_spec)
     transformer.run()
+    print(f"🐳 컨테이너 종료")
