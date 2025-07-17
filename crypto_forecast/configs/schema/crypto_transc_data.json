@@ -74,7 +74,7 @@
                 "type": "double",
                 "nullable": false,
                 "is_categorical": false,
-                "is_feature": false,
+                "is_feature": true,
                 "is_label": true,
                 "usage": "feature",
                 "code": {
@@ -89,7 +89,7 @@
                 "type": "double",
                 "nullable": false,
                 "is_categorical": false,
-                "is_feature": false,
+                "is_feature": true,
                 "is_label": true,
                 "usage": "feature",
                 "code": {
@@ -104,7 +104,7 @@
                 "type": "double",
                 "nullable": false,
                 "is_categorical": false,
-                "is_feature": false,
+                "is_feature": true,
                 "is_label": true,
                 "usage": "feature",
                 "code": {
@@ -134,7 +134,7 @@
                 "type": "double",
                 "nullable": false,
                 "is_categorical": false,
-                "is_feature": false,
+                "is_feature": true,
                 "is_label": false,
                 "usage": "feature",
                 "code": {
@@ -149,7 +149,7 @@
                 "type": "double",
                 "nullable": false,
                 "is_categorical": false,
-                "is_feature": false,
+                "is_feature": true,
                 "is_label": false,
                 "usage": "feature",
                 "code": {
