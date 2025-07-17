@@ -173,6 +173,186 @@
                 },
                 "task": [],
                 "comment": "캔들 시간 단위"
+            },
+            {
+                "name": "diff_opening_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": true,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["transform"],
+                "comment": "이전 시점 대비 시가 차이"
+            },
+            {
+                "name": "diff_trade_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": true,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["transform"],
+                "comment": "이전 시점 대비 종가 차이"
+            },
+            {
+                "name": "diff_low_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": true,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["transform"],
+                "comment": "이전 시점 대비 저가 차이"
+            },
+            {
+                "name": "diff_high_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": true,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["transform"],
+                "comment": "이전 시점 대비 고가 차이"
+            },
+            {
+                "name": "diff_candle_acc_trade_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": true,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["transform"],
+                "comment": "이전 시점 대비 누적 거래 금액 차이"
+            },
+            {
+                "name": "diff_candle_acc_trade_volume",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": true,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["transform"],
+                "comment": "이전 시점 대비 누적 거래량 차이"
+            },
+            {
+                "name": "ratio_opening_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": true,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["transform"],
+                "comment": "이전 시점 대비 시가 차이"
+            },
+            {
+                "name": "ratio_trade_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": true,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["transform"],
+                "comment": "이전 시점 대비 종가 차이"
+            },
+            {
+                "name": "ratio_low_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": true,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["transform"],
+                "comment": "이전 시점 대비 저가 차이"
+            },
+            {
+                "name": "ratio_high_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": true,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["transform"],
+                "comment": "이전 시점 대비 고가 차이"
+            },
+            {
+                "name": "ratio_candle_acc_trade_price",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": true,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["transform"],
+                "comment": "이전 시점 대비 누적 거래 금액 차이"
+            },
+            {
+                "name": "ratio_candle_acc_trade_volume",
+                "type": "double",
+                "nullable": false,
+                "is_categorical": false,
+                "is_feature": true,
+                "is_label": false,
+                "usage": "feature",
+                "code": {
+                    "value": [],
+                    "description": {}
+                },
+                "task": ["transform"],
+                "comment": "이전 시점 대비 누적 거래량 차이"
             }
         ]
     }
