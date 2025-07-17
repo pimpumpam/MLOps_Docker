@@ -28,7 +28,7 @@ class Loader:
         
         self.cfg_meta = cfg_meta
         self.cfg_loader = cfg_loader
-        self.schema = SchemaManager(f"./configs/schema/{cfg_meta.schema_file}").schema
+        self.schema_manager = SchemaManager(f"./configs/schema/{cfg_meta.schema_file}")
    
                 
     def run(self):
@@ -43,7 +43,7 @@ class Loader:
         )
 
         # 테이블 존재 여부 확인
-        is_table = db_manager.check_table_exists(table=self.schema["schema"]["table"])
+        is_table = db_manager.check_table_exists(table=self.schema_manager.schema["schema"]["table"])
 
         if is_table:
             latest_time = db_manager.execute_query(
@@ -88,7 +88,7 @@ class Loader:
 
         # 테이블 적재
         db_manager.insert_data_to_table(
-            table = self.schema["schema"]["table"],
+            table = self.schema_manager.schema["schema"]["table"],
             data = data,
             mode = mode
         )
