@@ -1,4 +1,3 @@
-import datetime
 import pandas as pd
 
 
@@ -54,9 +53,6 @@ def is_missing_timestamp_exists(data, time_col, unit='T', time_freq=1):
     )
     
     return len(data) != len(total_gaps)
-
-
-
 
 
 def fill_time_gaps(data, time_col, start_time, end_time, unit='T', time_freq=1):
