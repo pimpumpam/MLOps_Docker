@@ -90,15 +90,15 @@ class SchemaManager:
         columns = []
 
         for col in self.schema["schema"].get("columns", []):
-
+            
             matched = True
 
             for key, val in kwargs.items():
-                if key == "tasks":
+                if key == "task":
                     if isinstance(val, str):
                         val = [val]
 
-                    if not set(val).issubset(set(col["tasks"])):
+                    if not set(val).issubset(set(col["task"])):
                         matched = False
                         break
                 
