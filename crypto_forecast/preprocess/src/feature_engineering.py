@@ -1,6 +1,6 @@
 import pandas as pd
 
-from utils.utils import TIME_UNIT_DICT
+# from utils.utils import TIME_UNIT_DICT
 
 
 def amount_of_change_price(data, time_col, feature_cols, unit='day', time_freq=1):
@@ -21,9 +21,6 @@ def amount_of_change_price(data, time_col, feature_cols, unit='day', time_freq=1
     # dtype check
     if not isinstance(feature_cols, list):
         feature_cols = [feature_cols]
-
-    # copy data
-    data = data.copy()
 
     # check & convert time column to datetime
     if not pd.api.types.is_datetime64_any_dtype(data[time_col]):
@@ -61,9 +58,6 @@ def amount_of_change_rate(data, time_col, feature_cols, unit='day', time_freq=1)
     # dtype check
     if not isinstance(feature_cols, list):
         feature_cols = [feature_cols]
-
-    # copy data
-    data = data.copy()
 
     # check & convert time column to datetime
     if not pd.api.types.is_datetime64_any_dtype(data[time_col]):

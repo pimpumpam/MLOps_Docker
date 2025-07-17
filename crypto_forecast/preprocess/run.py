@@ -33,13 +33,12 @@ class Preprocessor:
         
         
     def run(self):
-        
+
         TIME_COL = "candle_date_time_kst"
         FEATURE_COLS = self.schema_manager.get_columns_by_filter(
             is_feature=True,
-            is_label=False,
             usage="feature",
-            task=["preprocess"]
+            task="preprocess"
         )
         
         # DB 엔진
@@ -121,12 +120,11 @@ class Preprocessor:
         
         candle_data = amount_of_change_rate(
 			candle_data,
-			time_col=self.cfg_preprocessor.time_field,
-			feature_cols=self.cfg_preprocessor.feature_fields,
+			time_col=TIME_COL,
+			feature_cols=FEATURE_COLS,
 			unit='day',
 			time_freq=1
 		)
-        
         
         # 데이터 적재
         print("📦 전처리 데이터 DB 적재")
