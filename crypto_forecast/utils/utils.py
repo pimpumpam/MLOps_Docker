@@ -40,7 +40,7 @@ def load_spec_from_base_config(cfg_name):
 
 def read_sql_file(filepath):
     """
-    SQL 파일 내 쿼리 읽어오기
+    SQL 폴더 내 쿼리 읽어오기
 
     Args:
         filepath (str): 읽어 올 쿼리 파일.
