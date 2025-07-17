@@ -1,5 +1,5 @@
 # MLFlow Server
-FROM python:3.10-slim-buster
+FROM python:3.10-slim-bullseye
 
 RUN apt-get update && apt-get install -y \
     git \
