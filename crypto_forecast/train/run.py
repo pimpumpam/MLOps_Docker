@@ -2,60 +2,73 @@ import os
 import json
 import argparse
 import collections
-import pandas as pd
+from pathlib import Path
 
 import mlflow
 from mlflow.models.signature import infer_signature
 
-from src.database import create_db_engine
+from src.train import train
 from src.preparation import split_sliding_window
 from models.model import Model
-from src.train import train
-from utils.utils import load_spec_from_config, setup_experiment, hyperparameter_combination
+
+from structure.schema import SchemaManager
+from load.src.db_manager import DatabaseManager
+from utils.utils import read_sql_file, load_spec_from_base_config, load_spec_from_model_config, setup_experiment, hyperparameter_combination
 
 
 # globals
+TASK = "train"
+ROOT = Path(__file__).resolve().parent
+RUN_IDs = collections.defaultdict(list)
+
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = int(os.getenv("DB_PORT"))
 DB_USER = os.getenv("DB_USER")
 DB_PASSWORD = os.getenv("DB_PASSWORD")
 DB_NAME = os.getenv("DB_NAME")
 
-RUN_IDs = collections.defaultdict(list)
+
 
 class Trainer:
     
-    def __init__(self, cfg_meta, cfg_database, cfg_model, cfg_hyperparameter, cfg_train):
+    def __init__(self, cfg_meta, cfg_model, cfg_hyperparameter, cfg_train):
         
         mlflow.set_tracking_uri(uri="http://mlflow-server:5000")
         
         self.cfg_meta = cfg_meta
-        self.cfg_database = cfg_database
         self.cfg_model = cfg_model
         self.cfg_hyperparameter = cfg_hyperparameter
         self.cfg_train = cfg_train
+        self.schema_manager = SchemaManager(f"./configs.schema/{cfg_meta.schema_file}")
         
-        self.engine = create_db_engine(
-            host=DB_HOST,
-            port=DB_PORT,
-            user=DB_USER,
-            password=DB_PASSWORD,
-            database=DB_NAME
-        )
-        self.conn = self.engine.connect()
-        self.cursor = self.engine.raw_connection().cursor()
         
     def run(self):
-        print("🏃🏻Python 파일 실행")
+        
+        TIME_COL = "candle_date_time_kst"
+        FEATURE_COLS = self.schema_manager.get_columns_by_filter(
+            is_feature=True,
+            usage="feature",
+            task=TASK
+        )
+        
+        print(FEATURE_COLS)
                 
         # 데이터 불러오기
         print("🧐 DB 내 데이터 조회")
-        query = f"""
-                SELECT *
-                FROM {self.cfg_database.layer['gold']['scheme']}_{self.cfg_database.layer['gold']['table']}
-                ;
-                """
-        train_dataset = pd.read_sql(query, con=self.engine)
+        # DB 엔진
+        db_manager = DatabaseManager(
+            backend=self.cfg_meta.database_backend,
+            host=DB_HOST,
+            port=DB_PORT,
+            user=DB_USER,
+            passwd=DB_PASSWORD,
+            database=DB_NAME
+        )
+        
+        # 데이터 불러오기
+        train_dataset = db_manager.inquire_data_from_table(
+            query=read_sql_file(f"{self.cfg_meta.sql_path}/inquire-data-for-train.sql")
+        )
         
         # MLFlow 실험 설정
         print("🧪 MLFlow 실험 설정")
@@ -82,10 +95,10 @@ class Trainer:
                         
                         X, y = split_sliding_window(
                             data=train_dataset,
-                            feature_col=self.cfg_train.feature_field,
+                            feature_col=FEATURE_COLS,
                             input_seq_len=hyp['input_seq_len'],
                             label_seq_len=hyp['predict_seq_len'],
-                            time_col=self.cfg_train.time_field
+                            time_col=TIME_COL
                         )
                     
                         train(
@@ -114,10 +127,10 @@ class Trainer:
                 
                 X, y = split_sliding_window(
                     data=train_dataset,
-                    feature_col=self.cfg_train.feature_field,
+                    feature_col=FEATURE_COLS,
                     input_seq_len=hyp['input_seq_len'],
                     label_seq_len=hyp['predict_seq_len'],
-                    time_col=self.cfg_train.time_field
+                    time_col=TIME_COL
                 )
                 
                 # train(
@@ -140,25 +153,28 @@ class Trainer:
                 
                 RUN_IDs['run_id'].append(run.info.run_id)
         
-        with open(os.path.join(self.cfg_meta.static_dir, 'run_ids.json'), 'w') as f:
+        with open(os.path.join(self.cfg_meta.asset_path, 'run_ids.json'), 'w') as f:
             json.dump(RUN_IDs, f)
         
 
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser() 
-    parser.add_argument('--config', type=str, default='gru', help="Config 파이썬 파일 명. 확장자는 제외.")
-    args = parser.parse_args()
-
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--config", type=str, default="base_config", help="Config Python 파일 명. 확장자 제외.")
+    args = parser.parse_args() 
+    
     (
-        cfg_meta,
-        cfg_database,
-        cfg_model,
-        cfg_hyp,
-        cfg_train
-    ) = load_spec_from_config(args.config)
+        meta_spec, 
+        load_spec, 
+        preprocess_spec, 
+        transform_spec, 
+        train_spec, 
+        hyperparameter_spec, 
+        evaluate_spec, 
+        deploy_spec
+    ) = load_spec_from_base_config(args.config)
     
     print(f"🐳 컨테이너 실행")
-    trainer = Trainer(cfg_meta, cfg_database, cfg_model, cfg_hyp, cfg_train)
+    trainer = Trainer(meta_spec, cfg_model, hyperparameter_spec, train_spec)
     trainer.run()
     print(f"🐳 컨테이너 종료")
