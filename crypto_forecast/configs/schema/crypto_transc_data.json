@@ -66,7 +66,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["load", "preprocess"],
+                "task": ["load", "preprocess", "transform", "train"],
                 "comment": "시가"
             },
             {
@@ -81,7 +81,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["load", "preprocess"],
+                "task": ["load", "preprocess", "transform", "train"],
                 "comment": "고가"
             },
             {
@@ -96,7 +96,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["load", "preprocess"],
+                "task": ["load", "preprocess", "transform", "train"],
                 "comment": "저가"
             },
             {
@@ -111,7 +111,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["load", "preprocess"],
+                "task": ["load", "preprocess", "transform", "train"],
                 "comment": "종가"
             },
             {
@@ -141,7 +141,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["load", "preprocess"],
+                "task": ["load", "preprocess", "transform", "train"],
                 "comment": "누적 거래 금액"
             },
             {
@@ -156,7 +156,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["load", "preprocess"],
+                "task": ["load", "preprocess", "transform", "train"],
                 "comment": "누적 거래량"
             },
             {
@@ -186,7 +186,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["transform"],
+                "task": ["transform", "train"],
                 "comment": "이전 시점 대비 시가 차이"
             },
             {
@@ -201,7 +201,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["transform"],
+                "task": ["transform", "train"],
                 "comment": "이전 시점 대비 종가 차이"
             },
             {
@@ -216,7 +216,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["transform"],
+                "task": ["transform", "train"],
                 "comment": "이전 시점 대비 저가 차이"
             },
             {
@@ -231,7 +231,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["transform"],
+                "task": ["transform", "train"],
                 "comment": "이전 시점 대비 고가 차이"
             },
             {
@@ -246,7 +246,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["transform"],
+                "task": ["transform", "train"],
                 "comment": "이전 시점 대비 누적 거래 금액 차이"
             },
             {
@@ -261,7 +261,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["transform"],
+                "task": ["transform", "train"],
                 "comment": "이전 시점 대비 누적 거래량 차이"
             },
             {
@@ -276,7 +276,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["transform"],
+                "task": ["transform", "train"],
                 "comment": "이전 시점 대비 시가 차이"
             },
             {
@@ -291,7 +291,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["transform"],
+                "task": ["transform", "train"],
                 "comment": "이전 시점 대비 종가 차이"
             },
             {
@@ -306,7 +306,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["transform"],
+                "task": ["transform", "train"],
                 "comment": "이전 시점 대비 저가 차이"
             },
             {
@@ -321,7 +321,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["transform"],
+                "task": ["transform", "train"],
                 "comment": "이전 시점 대비 고가 차이"
             },
             {
@@ -336,7 +336,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["transform"],
+                "task": ["transform", "train"],
                 "comment": "이전 시점 대비 누적 거래 금액 차이"
             },
             {
@@ -351,7 +351,7 @@
                     "value": [],
                     "description": {}
                 },
-                "task": ["transform"],
+                "task": ["transform", "train"],
                 "comment": "이전 시점 대비 누적 거래량 차이"
             }
         ]
