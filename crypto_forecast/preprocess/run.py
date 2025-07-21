@@ -140,7 +140,7 @@ class Preprocessor:
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default="base_config", help="Config Python 파일 명. 확장자 제외.")
+    parser.add_argument("--config", type=str, default="gru", help="Config Python 파일 명. 확장자 제외.")
     args = parser.parse_args() 
     
     (
@@ -148,13 +148,13 @@ if __name__ == "__main__":
         load_spec, 
         preprocess_spec, 
         transform_spec, 
-        train_spec, 
+        model_spec,
         hyperparameter_spec, 
+        train_spec, 
         evaluate_spec, 
         deploy_spec
     ) = load_spec_from_base_config(args.config)
     
-    print(f"🐳 컨테이너 실행")
     preprocessor = Preprocessor(meta_spec, preprocess_spec)
     preprocessor.run()
-    print(f"🐳 컨테이너 종료")
+    
