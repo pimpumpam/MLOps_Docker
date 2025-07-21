@@ -8,12 +8,12 @@ import mlflow
 from mlflow.models.signature import infer_signature
 
 from src.train import train
-from src.preparation import split_sliding_window
+from src.preparation import apply_sliding_window
 from models.model import Model
 
 from structure.schema import SchemaManager
 from load.src.db_manager import DatabaseManager
-from utils.utils import read_sql_file, load_spec_from_base_config, load_spec_from_model_config, setup_experiment, hyperparameter_combination
+from utils.utils import read_sql_file, load_spec_from_base_config, setup_experiment, hyperparameter_combination
 
 
 # globals
@@ -39,7 +39,7 @@ class Trainer:
         self.cfg_model = cfg_model
         self.cfg_hyperparameter = cfg_hyperparameter
         self.cfg_train = cfg_train
-        self.schema_manager = SchemaManager(f"./configs.schema/{cfg_meta.schema_file}")
+        self.schema_manager = SchemaManager(f"./configs/schema/{cfg_meta.schema_file}")
         
         
     def run(self):
@@ -50,8 +50,6 @@ class Trainer:
             usage="feature",
             task=TASK
         )
-        
-        print(FEATURE_COLS)
                 
         # 데이터 불러오기
         print("🧐 DB 내 데이터 조회")
@@ -74,7 +72,7 @@ class Trainer:
         print("🧪 MLFlow 실험 설정")
         setup_experiment(
             self.cfg_meta.experiment_name,
-            artifact_location=self.cfg_meta.artifacts_dir
+            artifact_location=self.cfg_meta.artifact_path
         )
         
         # 하이퍼파라미터 설정
@@ -93,19 +91,19 @@ class Trainer:
                         print(f"🤖 {idx+1}/{len(hyp_list)} 모델 학습 중 ...")
                         model = Model(self.cfg_model)
                         
-                        X, y = split_sliding_window(
+                        X, y = apply_sliding_window(
                             data=train_dataset,
-                            feature_col=FEATURE_COLS,
+                            time_col=TIME_COL,
+                            feature_cols=FEATURE_COLS,
                             input_seq_len=hyp['input_seq_len'],
-                            label_seq_len=hyp['predict_seq_len'],
-                            time_col=TIME_COL
+                            label_seq_len=hyp['predict_seq_len']
                         )
                     
                         train(
                             dataset=(X, y),
                             model=model,
                             batch_size=hyp['batch_size'],
-                            num_epochs=hyp['num_epoch'],
+                            num_epochs=hyp['num_epochs'],
                             learning_rate=hyp['learning_rate'],
                             device='cpu'
                         )
@@ -125,12 +123,12 @@ class Trainer:
                 hyp = hyp_list.pop()
                 model = Model(self.cfg_model)
                 
-                X, y = split_sliding_window(
+                X, y = apply_sliding_window(
                     data=train_dataset,
-                    feature_col=FEATURE_COLS,
+                    time_col=TIME_COL,
+                    feature_cols=FEATURE_COLS,
                     input_seq_len=hyp['input_seq_len'],
-                    label_seq_len=hyp['predict_seq_len'],
-                    time_col=TIME_COL
+                    label_seq_len=hyp['predict_seq_len']
                 )
                 
                 # train(
@@ -160,7 +158,7 @@ class Trainer:
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default="base_config", help="Config Python 파일 명. 확장자 제외.")
+    parser.add_argument("--config", type=str, default="gru", help="Config Python 파일 명. 확장자 제외.")
     args = parser.parse_args() 
     
     (
@@ -168,13 +166,13 @@ if __name__ == "__main__":
         load_spec, 
         preprocess_spec, 
         transform_spec, 
-        train_spec, 
+        model_spec,
         hyperparameter_spec, 
+        train_spec, 
         evaluate_spec, 
         deploy_spec
     ) = load_spec_from_base_config(args.config)
     
-    print(f"🐳 컨테이너 실행")
-    trainer = Trainer(meta_spec, cfg_model, hyperparameter_spec, train_spec)
+    trainer = Trainer(meta_spec, model_spec, hyperparameter_spec, train_spec)
     trainer.run()
-    print(f"🐳 컨테이너 종료")
+    

@@ -25,4 +25,4 @@ CMD ["python", "run.py"]
 # $ docker build -t crypto_train_image .
 
 # 컨테이너 실행
-# $ docker run -it --name crypto_train -v static_volume:/app/static -v mlflow_volume:/app/mlruns --network crypto_forecast_crypto_network crypto_train_image
+# $ docker run -dit --name crypto_train --network crypto_forecast_crypto_network -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/sql:/app/sql" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/configs:/app/configs" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/utils:/app/utils" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/structure:/app/structure" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/load/src:/app/load/src" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/static/assets:/app/static/assets" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/train/src:/app/src" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/train/models:/app/models" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/train/run.py:/app/run.py" crypto_train_image tail -f /dev/null

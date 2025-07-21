@@ -5,25 +5,25 @@ import torch
 from torch.utils.data import Dataset
 
 
-def split_sliding_window(data, feature_col, input_seq_len, label_seq_len, **kwargs):
+def apply_sliding_window(data, time_col, feature_cols, input_seq_len, label_seq_len, **kwargs):
 
     # dtype check
-    if not isinstance(feature_col, list):
-        feature_col = [feature_col]
+    if not isinstance(feature_cols, list):
+        feature_cols = [feature_cols]
         
     # remove duplicated and NaN row
     data = data.drop_duplicates()
     data = data.dropna()
 
     # sort by time column
-    if 'time_col' in kwargs:
-        if not pd.api.types.is_datetime64_any_dtype(data[kwargs['time_col']]):
-            data[kwargs['time_col']] = pd.to_datetime(data[kwargs['time_col']])
+    
+    if not pd.api.types.is_datetime64_any_dtype(data[time_col]):
+        data[time_col] = pd.to_datetime(data[time_col])
 
-        data = data.sort_values(by=kwargs['time_col']).reset_index(drop=True)
+        data = data.sort_values(by=time_col).reset_index(drop=True)
 
     # data sampling
-    data_arr = data[feature_col].values
+    data_arr = data[feature_cols].values
     
     # set sequence length
     seq_len = input_seq_len + label_seq_len

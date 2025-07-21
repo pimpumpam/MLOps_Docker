@@ -10,7 +10,7 @@ class GRULayer(nn.Module):
         self.cfg_model = cfg_model
         self.model = nn.ModuleList()
         
-        for idx, (module, args) in enumerate(cfg_model.gru_layer['architecture']):
+        for idx, (module, args) in enumerate(cfg_model.rnn_layer):
             layer = eval(module)(*args)
             
             self.model.append(layer)
@@ -18,9 +18,9 @@ class GRULayer(nn.Module):
     def forward(self, x):
         
         h = torch.zeros(
-            self.cfg_model.gru_layer['num_layers'],
+            self.cfg_model.gru_num_layers,
             x.size(0),
-            self.cfg_model.gru_layer['hidden_dim']
+            self.cfg_model.gru_hidden_dims
         )
         
         for layer in self.model:

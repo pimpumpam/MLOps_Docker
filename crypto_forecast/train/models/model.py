@@ -17,7 +17,7 @@ class Model(nn.Module):
         out = self.rnn_layer(x) # batch x seq x hidden
         out = out.reshape(out.size(0), -1) # batch x (seq * hidden)
         out = self.linear_layer(out) # batch x (pred_seq * out_feat)
-        out = out.reshape(out.size(0), -1, self.cfg_model.output_feature_dims)
+        out = out.reshape(out.size(0), -1, self.cfg_model.output_dims)
         
         return out
         
