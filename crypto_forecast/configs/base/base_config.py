@@ -9,8 +9,6 @@ class CfgMeta:
 
 
 class CfgLoad:
-    # scheme = 'dw_brz',
-    # table = 'crypto_transc_candle_upbit_minutes'
     market = "KRW-BTC" 
     unit = "minutes"
     time_unit = 1
@@ -26,6 +24,9 @@ class CfgPreprocess:
 class CfgTransform:
     scaler = "MinMaxScaler"
     
+
+class CfgModel:
+    pass
 
 class CfgTrain:
     pass
