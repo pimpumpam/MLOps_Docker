@@ -47,7 +47,7 @@ class Loader:
 
         if is_table:
             latest_time = db_manager.execute_query(
-                query = read_sql_file(f"{self.cfg_meta.sql_path}/inquire_recent_timestamp.sql")
+                query = read_sql_file(f"{self.cfg_meta.sql_path}/inquire-recent-timestamp.sql")
             ).scalar()
 
             tic = datetime.strptime(latest_time, "%Y-%m-%dT%H:%M:%S") + timedelta(minutes=1)
@@ -95,16 +95,17 @@ class Loader:
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default="base_config", help="Config Python 파일 명. 확장자 제외.")
+    parser.add_argument("--config", type=str, default="gru", help="Config Python 파일 명. 확장자 제외.")
     args = parser.parse_args() 
     
     (
         meta_spec, 
         load_spec, 
         preprocess_spec, 
-        transform_spec, 
-        train_spec, 
+        transform_spec,
+        model_spec, 
         hyperparameter_spec, 
+        train_spec, 
         evaluate_spec, 
         deploy_spec
     ) = load_spec_from_base_config(args.config)
