@@ -366,7 +366,7 @@ services:
       - /bin/sh
       - -c
       - |
-        mc config host add mlflowminio http://minio:9000 lazyplum kwsxfk8332 &&
+        mc alias set mlflowminio http://minio:9000 lazyplum kwsxfk8332 &&
         mc mb --ignore-existing mlflowminio/mlflow
         mlflow server \
         --backend-store-uri postgresql://lazyplum:kwsxfk8332@postgres/mlflow_db \
