@@ -20,4 +20,4 @@ CMD ["python", "run.py"]
 # $ docker build -t crypto_transform_image .
 
 # 컨테이너 실행
-# $ docker run -d --name crypto_transform -v static_volume:/app/static --network crypto_forecast_crypto_network crypto_transform_image
+# $ docker run -d --name crypto_transform --network crypto_forecast_crypto_network -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/sql:/app/sql" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/configs:/app/configs" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/utils:/app/utils" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/structure:/app/structure" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/load/src:/app/load/src" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/transform/src:/app/src" -v "/Users/pimpumpam/Desktop/myScript/MLOps_Docker/crypto_forecast/transform/run.py:/app/run.py" crypto_transform_image tail -f /dev/null

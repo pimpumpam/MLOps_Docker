@@ -39,8 +39,6 @@ class Transformer:
             task=TASK
         )
         
-        print(FEATURE_COLS)
-        
         # DB 엔진
         db_manager = DatabaseManager(
             backend=self.cfg_meta.database_backend,
@@ -64,9 +62,9 @@ class Transformer:
             data=candle_data,
             columns=FEATURE_COLS,
             inplace=True,
-            save_pkl=True,
-            save_path=self.cfg_meta.artifact_path,
-            save_name=f"{self.cfg_transform.scaler.lower()}_{datetime.now().strftime("%Y%m%d%H%M%S")}"
+            save_pkl=False,
+            # save_path=self.cfg_meta.artifact_path,
+            # save_name=f"{self.cfg_transform.scaler.lower()}_{datetime.now().strftime("%Y%m%d%H%M%S")}"
         )
         
         
@@ -88,8 +86,6 @@ class Transformer:
             mode="replace"
         )
         
-
-        
         print("📦 검증 데이터 셋 DB 적재")
         db_manager.insert_data_to_table(
             table=self.schema_manager.schema["schema"]["table"]+"_test",
@@ -101,7 +97,7 @@ class Transformer:
 if __name__ == "__main__":
     
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default="base_config", help="Config Python 파일 명. 확장자 제외.")
+    parser.add_argument("--config", type=str, default="gru", help="Config Python 파일 명. 확장자 제외.")
     args = parser.parse_args() 
     
     (
@@ -109,8 +105,9 @@ if __name__ == "__main__":
         load_spec, 
         preprocess_spec, 
         transform_spec, 
-        train_spec, 
+        model_spec,
         hyperparameter_spec, 
+        train_spec, 
         evaluate_spec, 
         deploy_spec
     ) = load_spec_from_base_config(args.config)
