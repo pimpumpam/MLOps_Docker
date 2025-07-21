@@ -1,4 +1,4 @@
-import mlflow
+import importlib
 from itertools import product
 from typing import Sequence, cast
 
@@ -6,39 +6,53 @@ PROGRESS_BAR_FORMAT = '{l_bar}{bar:10}{r_bar}'
 
 def load_spec_from_base_config(cfg_name):
 
+    try:
+        base_module = importlib.import_module("configs.base.base_config")
+        model_module = importlib.import_module(f"configs.model.{cfg_name}")
+
+        model_cfg = getattr(model_module, "CfgModel")
+        setattr(base_module, "CfgModel", model_cfg)
+
+    except ModuleNotFoundError as e:
+        raise(e)
+
     meta_spec = __import__(
-        f"configs.base.{cfg_name}", fromlist=cast(Sequence[str], [None])
+        f"configs.base.base_config", fromlist=cast(Sequence[str], [None])
     ).CfgMeta
 
     load_spec = __import__(
-        f"configs.base.{cfg_name}", fromlist=cast(Sequence[str], [None])
+        f"configs.base.base_config", fromlist=cast(Sequence[str], [None])
     ).CfgLoad
 
     preprocess_spec = __import__(
-        f"configs.base.{cfg_name}", fromlist=cast(Sequence[str], [None])
+        f"configs.base.base_config", fromlist=cast(Sequence[str], [None])
     ).CfgPreprocess
 
     transform_spec = __import__(
-        f"configs.base.{cfg_name}", fromlist=cast(Sequence[str], [None])
+        f"configs.base.base_config", fromlist=cast(Sequence[str], [None])
     ).CfgTransform
 
-    train_spec = __import__(
-        f"configs.base.{cfg_name}", fromlist=cast(Sequence[str], [None])
-    ).CfgTrain
+    model_spec = __import__(
+        f"configs.base.base_config", fromlist=cast(Sequence[str], [None])
+    ).CfgModel
 
     hyperparameter_spec = __import__(
-        f"configs.base.{cfg_name}", fromlist=cast(Sequence[str], [None])
+        f"configs.base.base_config", fromlist=cast(Sequence[str], [None])
     ).CfgHyperparameter
+    
+    train_spec = __import__(
+        f"configs.base.base_config", fromlist=cast(Sequence[str], [None])
+    ).CfgTrain
 
     evaluate_spec = __import__(
-        f"configs.base.{cfg_name}", fromlist=cast(Sequence[str], [None])
+        f"configs.base.base_config", fromlist=cast(Sequence[str], [None])
     ).CfgEvaluate
 
     deploy_spec = __import__(
-        f"configs.base.{cfg_name}", fromlist=cast(Sequence[str], [None])
+        f"configs.base.base_config", fromlist=cast(Sequence[str], [None])
     ).CfgDeploy
 
-    return meta_spec, load_spec, preprocess_spec, transform_spec, train_spec, hyperparameter_spec, evaluate_spec, deploy_spec
+    return meta_spec, load_spec, preprocess_spec, transform_spec, model_spec, hyperparameter_spec, train_spec, evaluate_spec, deploy_spec
 
 
 
@@ -68,6 +82,8 @@ def setup_experiment(experiment_name, artifact_location):
         experiment_name (str): Experiment 명
         artifact_location (str): Artiface 저장 경로
     """
+
+    import mlflow
     
     try:
         mlflow.create_experiment(
